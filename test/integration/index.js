@@ -222,6 +222,55 @@ const customTemplatesExample = () => {
   })
 }
 
+const customTemplatesDefaultValueExample = () => {
+  describe('custom templates with a prefilled value example', function () {
+    const input = 'input#autocomplete-customTemplatesDefaultValue'
+
+    let $input
+    let $menu
+
+    beforeEach(async () => {
+      $input = await $(input)
+      $menu = await $(`${input} + ul`)
+
+      await browser.execute(() => {
+        window.autocompleteErrors = []
+        window.addEventListener('error', (event) => window.autocompleteErrors.push(event.message))
+      })
+    })
+
+    it('should be prefilled', async () => {
+      expect(await $input.getValue()).toEqual('France')
+    })
+
+    it('should not display an empty suggestion on focus', async () => {
+      await $input.click()
+      expect(await $input.isFocused()).toEqual(true)
+      const displayedSuggestions = await browser.execute((selector) => {
+        return Array.from(document.querySelectorAll(selector))
+          .filter((option) => option.offsetParent !== null)
+          .map((option) => option.textContent.trim())
+      }, `${input} + ul li`)
+      expect(displayedSuggestions.filter((text) => text === '' || text.includes('undefined'))).toEqual([])
+    })
+
+    it('should keep the value without errors on blur', async () => {
+      await $input.click()
+      await browser.keys([Key.Tab])
+      expect(await $input.isFocused()).toEqual(false)
+      expect(await $input.getValue()).toEqual('France')
+      expect(await browser.execute(() => window.autocompleteErrors)).toEqual([])
+    })
+
+    it('should display suggestions once the query changes', async () => {
+      await $input.click()
+      await $input.setValue('deu')
+      await $menu.waitForDisplayed()
+      expect(await $(`${input} + ul li:nth-child(1)`).getText()).toEqual('Germany (Deutschland)')
+    })
+  })
+}
+
 const classesPropsExamples = () => {
   describe('classes properties', () => {
     it('should set `inputClasses` on both hint and input', async () => {
@@ -275,6 +324,7 @@ describe('Accessible Autocomplete', () => {
 
   basicExample()
   customTemplatesExample()
+  customTemplatesDefaultValueExample()
   classesPropsExamples()
 
   takeScreenshotsIfFail()
