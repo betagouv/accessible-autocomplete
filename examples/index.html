@@ -190,6 +190,16 @@
       <label for="autocomplete-customTemplates">Country</label>
       <div id="tt-customTemplates" class="autocomplete-wrapper"></div>
 
+      <h3>Custom results with a prefilled value</h3>
+      <p>
+        This example combines the custom results above with <code>{ defaultValue: 'France' }</code>,
+        for example when editing a form that has already been saved.
+        Focusing and then leaving the input should not open the menu or change the value.
+      </p>
+      <p>Uses the <code>{ defaultValue, templates: { inputValue, suggestion } }</code> options.</p>
+      <label for="autocomplete-customTemplatesDefaultValue">Country</label>
+      <div id="tt-customTemplatesDefaultValue" class="autocomplete-wrapper"></div>
+
       <h3>Translating texts</h3>
       <p>
         This example demonstrates how to translate the texts emitted by the component.
@@ -590,6 +600,21 @@
       element = document.querySelector('#tt-customTemplates')
       id = 'autocomplete-customTemplates'
       accessibleAutocomplete({
+        element: element,
+        id: id,
+        source: customSuggest,
+        templates: {
+          inputValue: inputValueTemplate,
+          suggestion: suggestionTemplate
+        }
+      })
+    </script>
+
+    <script type="text/javascript">
+      element = document.querySelector('#tt-customTemplatesDefaultValue')
+      id = 'autocomplete-customTemplatesDefaultValue'
+      accessibleAutocomplete({
+        defaultValue: 'France',
         element: element,
         id: id,
         source: customSuggest,
