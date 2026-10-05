@@ -254,6 +254,12 @@ const customTemplatesDefaultValueExample = () => {
       expect(displayedSuggestions.filter((text) => text === '' || text.includes('undefined'))).toEqual([])
     })
 
+    it('should not open the menu on focus', async () => {
+      await $input.click()
+      expect(await $input.isFocused()).toEqual(true)
+      expect(await $menu.isDisplayed()).toEqual(false)
+    })
+
     it('should keep the value without errors on blur', async () => {
       await $input.click()
       await browser.keys([Key.Tab])
