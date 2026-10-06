@@ -406,6 +406,36 @@ describe('Autocomplete', () => {
           expect(autocomplete.state.options[0]).to.equal('France')
           expect(autocomplete.state.query).to.equal('France')
         })
+
+        it('counts the prefilled value as a valid choice', () => {
+          expect(autocomplete.state.validChoiceMade).to.equal(true)
+        })
+
+        it('does not open the menu on focus', () => {
+          autocomplete.handleInputFocus({})
+          expect(autocomplete.state.menuOpen).to.equal(false)
+        })
+
+        it('does not pass the prefilled string to templates on blur', () => {
+          autocomplete = new Autocomplete({
+            ...Autocomplete.defaultProps,
+            defaultValue: 'France',
+            id: 'test',
+            source: suggest,
+            templates: { inputValue: option => option && option.label }
+          })
+          autocomplete.handleInputFocus({})
+          expect(() => autocomplete.handleInputBlur({ relatedTarget: null })).to.not.throw()
+          expect(autocomplete.state.validChoiceMade).to.equal(true)
+          expect(autocomplete.state.query).to.equal('France')
+        })
+
+        it('searches as usual once the query changes', () => {
+          autocomplete.handleInputChange({ target: { value: 'Fra' } })
+          expect(autocomplete.state.menuOpen).to.equal(true)
+          expect(autocomplete.state.options).to.contain('France')
+          expect(autocomplete.state.validChoiceMade).to.equal(false)
+        })
       })
     })
 

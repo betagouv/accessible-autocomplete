@@ -68,7 +68,7 @@ export default class Autocomplete extends Component {
       menuOpen: false,
       options: props.defaultValue ? [props.defaultValue] : [],
       query: props.defaultValue,
-      validChoiceMade: false,
+      validChoiceMade: !!props.defaultValue,
       selected: null,
       ariaHint: true
     }
@@ -163,7 +163,7 @@ export default class Autocomplete extends Component {
   }
 
   handleComponentBlur (newState) {
-    const { options, query, selected } = this.state
+    const { options, query, selected, validChoiceMade } = this.state
     let newQuery
     if (this.props.confirmOnBlur) {
       newQuery = newState.query || query
@@ -176,7 +176,7 @@ export default class Autocomplete extends Component {
       menuOpen: newState.menuOpen || false,
       query: newQuery,
       selected: null,
-      validChoiceMade: this.isQueryAnOption(newQuery, options)
+      validChoiceMade: (validChoiceMade && newQuery === query) || this.isQueryAnOption(newQuery, options)
     })
   }
 
